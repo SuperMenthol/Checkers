@@ -1,0 +1,11 @@
+{ 
+    "APIConnection": {
+        "BaseAddress": "https://localhost:7263/api/",
+        "Methods": {
+            "GetPlayerInfo": "Player/getInfo?playerId=",
+            "CreatePlayer": "Player/create?playerName=",
+            "RenamePlayer": "Player/rename",
+            "PostMatchResult": "Match/postresult"
+        }
+    }
+}
