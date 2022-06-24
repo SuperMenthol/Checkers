@@ -18,21 +18,21 @@ namespace Assets.Scripts.Infrastructure
             _configurator = new APIConfigurator();
         }
 
-        public async Task<BaseResponse> CreatePlayer(string playerName)
+        public async Task<BaseResponse<object>> CreatePlayer(string playerName)
         {
             var path = _configurator.CreatePlayer(playerName);
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, path);
 
-            return await BasePost(requestMessage, path);
+            return await BasePost<object>(requestMessage);
         }
 
-        public async Task<BaseResponse> Login(string playerName)
+        public async Task<BaseResponse<PlayerModel>> Login(string playerName)
         {
             var path = _configurator.Login(playerName);
-            return await BaseGet(path);
+            return await BaseGet<BaseResponse<PlayerModel>>(path);
         }
 
-        public async Task<BaseResponse> PostMatchResult(MatchResult matchResult)
+        public async Task<BaseResponse<object>> PostMatchResult(MatchResult matchResult)
         {
             var path = _configurator.PostMatchResult();
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, path);
@@ -43,25 +43,26 @@ namespace Assets.Scripts.Infrastructure
             var serializedContent = JsonConvert.SerializeObject(matchResult);
             request.Content = new StringContent(serializedContent, Encoding.UTF8, "application/json");
 
-            return await BasePost(request, path);
+            return await BasePost<object>(request);
         }
 
-        private async Task<BaseResponse> BasePost(HttpRequestMessage request, string path)
+        // consider reflection here
+        private async Task<BaseResponse<T>> BasePost<T>(HttpRequestMessage request) where T : class
         {
             HttpResponseMessage result = await _client.SendAsync(request);
-            return await GetBaseResponseMessage(result);
+            return await GetDeserializedContent<BaseResponse<T>>(result);
         }
 
-        private async Task<BaseResponse> BaseGet(string path)
+        private async Task<T> BaseGet<T>(string path) where T : class
         {
             HttpResponseMessage result = await _client.GetAsync(path);
-            return await GetBaseResponseMessage(result);
+            return await GetDeserializedContent<T>(result);
         }
 
-        private async Task<BaseResponse> GetBaseResponseMessage(HttpResponseMessage response)
+        private async Task<T> GetDeserializedContent<T>(HttpResponseMessage response) where T : class
         {
             var contentString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<BaseResponse>(contentString);
+            return JsonConvert.DeserializeObject<T>(contentString);
         }
     }
 }

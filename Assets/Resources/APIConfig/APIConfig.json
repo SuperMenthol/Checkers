@@ -5,6 +5,7 @@
             "GetPlayerInfo": "Player/getInfo?playerId=",
             "CreatePlayer": "Player/create?playerName=",
             "RenamePlayer": "Player/rename",
+            "Login": "Player/login?playerName=",
             "PostMatchResult": "Match/postresult"
         }
     }

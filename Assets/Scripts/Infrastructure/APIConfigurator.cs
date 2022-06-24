@@ -43,7 +43,7 @@ namespace Assets.Scripts.Infrastructure
         public string Login(string playerName) =>
             string.Format("{0}{1}{2}"
                 , _baseAddress
-                , _configurationFile.APIConnection.Methods.CreatePlayer
+                , _configurationFile.APIConnection.Methods.Login
                 , playerName);
 
         public string PostMatchResult() =>
